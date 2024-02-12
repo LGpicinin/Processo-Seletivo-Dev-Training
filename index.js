@@ -9,6 +9,7 @@ import { google } from 'googleapis';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = join(cwd(), 'token.json');
 const CREDENTIALS_PATH = join(cwd(), 'credentials.json');
+const SPREADSHEET_ID = '1SVpmjx7ElYpOA7Xrgx26VeRo6zRplvI6Xe9f57KKkhE';
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -136,14 +137,13 @@ function convertStudentsDataToRows(students){
 */
 
 async function getAndUpdateSheets(auth) {
-  const spreadsheetId = '1GIG-XXL0VUYqFi2_iQdRm8v73SOqE77ouX1fpeRLMvM';
   const sheets = google.sheets({version: 'v4', auth});
 
   console.log(`${Date ()} : Request values of spreadsheet`);
   
 
   const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: spreadsheetId,
+    spreadsheetId: SPREADSHEET_ID,
     range: 'engenharia_de_software!C4:F27'
   });
 
@@ -160,7 +160,7 @@ async function getAndUpdateSheets(auth) {
 
   rows.forEach((row) => {
     students.push(new Student(parseInt(row[0]), parseInt(row[1]), parseInt(row[2]), parseInt(row[3])));
-  });
+  }); //add students in same other that they came (row 4 to row 27)
 
   calculateStudentsSituation(students);
 
@@ -172,7 +172,7 @@ async function getAndUpdateSheets(auth) {
 
   try{
     sheets.spreadsheets.values.update({
-      spreadsheetId: spreadsheetId,
+      spreadsheetId: SPREADSHEET_ID,
       range: range,
       valueInputOption: valueInputOption,
       resource: {
